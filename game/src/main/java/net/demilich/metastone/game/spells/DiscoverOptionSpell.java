@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import co.paralleluniverse.fibers.Suspendable;
+import net.demilich.metastone.game.behaviour.human.HumanBehaviour;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +60,7 @@ public class DiscoverOptionSpell extends Spell {
 				}
 			}
 			if (!spellChoices.isEmpty()) {
-				SpellDesc chosenSpell = SpellUtils.getSpellDiscover(context, player, desc, spellChoices).getSpell();
+				SpellDesc chosenSpell = SpellUtils.getSpellDiscover(context, player, source.getReference(), spellChoices).getSpell();
 				chosenSpellInts.add(spellOrder.get(chosenSpell));
 				if (exclusive) {
 					spellChoices.remove(chosenSpell);

@@ -31,6 +31,7 @@ public class ControlApplication {
 
 	public static void main(String[] args) throws ParseException, CardParseException, IOException, URISyntaxException {
 		Logger logger = Logger.getLogger(ControlApplication.class);
+		Common.setLogLevelToError();
 
 		String decksFile = null;
 		int gamesPerBatch = 1;

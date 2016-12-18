@@ -121,10 +121,10 @@ public class SpellUtils {
 	}
 
 	@Suspendable
-	public static DiscoverAction getSpellDiscover(GameContext context, Player player, SpellDesc desc, List<SpellDesc> spells) {
-		List<GameAction> discoverActions = getDiscoverActionsForSpells(spells);
+	public static DiscoverAction getSpellDiscover(GameContext context, Player player, EntityReference source, List<SpellDesc> spells) {
+		List<GameAction> discoverActions = getDiscoverActionsForSpells(spells, source);
 
-		final boolean isAllRandom = context.getLogic().attributeExists(Attribute.ALL_RANDOM_FINAL_DESTINATION) ||
+		final boolean isAllRandom = context.getLogic().attributeExists(Attribute.ALL_RANDOM_YOGG_ONLY_FINAL_DESTINATION) ||
 				context.getLogic().attributeExists(Attribute.ALL_RANDOM_FINAL_DESTINATION);
 
 		if (isAllRandom) {
@@ -135,24 +135,25 @@ public class SpellUtils {
 
 	}
 
-	protected static List<GameAction> getDiscoverActionsForSpells(List<SpellDesc> spells) {
+	protected static List<GameAction> getDiscoverActionsForSpells(List<SpellDesc> spells, EntityReference source) {
 		List<GameAction> discoverActions = new ArrayList<>();
 		for (SpellDesc spell : spells) {
 			DiscoverAction discover = DiscoverAction.createDiscover(spell);
 			discover.setName(spell.getString(SpellArg.NAME));
 			discover.setDescription(spell.getString(SpellArg.DESCRIPTION));
 			discover.setActionSuffix((String) spell.get(SpellArg.NAME));
+			discover.setSource(source);
 			discoverActions.add(discover);
 		}
 		return discoverActions;
 	}
 
 	@Suspendable
-	public static void getSpellDiscoverAsync(GameContext context, Player player, SpellDesc desc, List<SpellDesc> spells, Handler<DiscoverAction> handler) {
+	public static void getSpellDiscoverAsync(GameContext context, Player player, EntityReference source, List<SpellDesc> spells, Handler<DiscoverAction> handler) {
 		// TODO: Adapt Kazakus to use this
-		List<GameAction> discoverActions = getDiscoverActionsForSpells(spells);
+		List<GameAction> discoverActions = getDiscoverActionsForSpells(spells, source);
 
-		final boolean isAllRandom = context.getLogic().attributeExists(Attribute.ALL_RANDOM_FINAL_DESTINATION) ||
+		final boolean isAllRandom = context.getLogic().attributeExists(Attribute.ALL_RANDOM_YOGG_ONLY_FINAL_DESTINATION) ||
 				context.getLogic().attributeExists(Attribute.ALL_RANDOM_FINAL_DESTINATION);
 
 		if (isAllRandom) {

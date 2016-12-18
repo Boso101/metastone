@@ -14,6 +14,7 @@ import net.demilich.metastone.game.entities.Actor;
 import net.demilich.metastone.game.entities.Entity;
 import net.demilich.metastone.game.entities.minions.Minion;
 import net.demilich.metastone.game.events.GameEvent;
+import net.demilich.metastone.game.logic.CustomCloneable;
 import net.demilich.metastone.game.logic.GameLogic;
 import net.demilich.metastone.game.logic.MatchResult;
 import net.demilich.metastone.game.logic.TargetLogic;
@@ -122,7 +123,11 @@ public class GameContext implements Cloneable, IDisposable, Serializable {
 
 		for (Environment key : getEnvironment().keySet()) {
 			if (!key.customClone()) {
-				clone.getEnvironment().put(key, getEnvironment().get(key));
+				Object value = getEnvironment().get(key);
+				if (value instanceof CustomCloneable) {
+					value = ((CustomCloneable) value).clone();
+				}
+				clone.getEnvironment().put(key, value);
 			}
 		}
 
@@ -524,6 +529,19 @@ public class GameContext implements Cloneable, IDisposable, Serializable {
 				return getPendingCard();
 			case HERO_POWER:
 				return player.getHero().getHeroPower();
+			case GRAVEYARD:
+				Optional<Entity> graveyardEntity = player.getGraveyard().stream().filter(e -> {
+					if (e instanceof Card) {
+						Card c = (Card) e;
+						return c.getCardReference().equals(cardReference);
+					} else {
+						return false;
+					}
+				}).findFirst();
+				if (graveyardEntity.isPresent()
+						&& graveyardEntity.get() instanceof Card) {
+					return (Card) graveyardEntity.get();
+				}
 			default:
 				break;
 
@@ -679,6 +697,9 @@ public class GameContext implements Cloneable, IDisposable, Serializable {
 		builder.append("Turn: " + getTurn() + "\n");
 		builder.append("Result: " + getResult() + "\n");
 		builder.append("Winner: " + (getWinner() == null ? "tbd" : getWinner().getName()));
+
+		builder.append("\nEnvironment:\n");
+		builder.append(getEnvironment().toString());
 
 		builder.append("\nExceptions: \n");
 		getExceptions().forEach(t -> {

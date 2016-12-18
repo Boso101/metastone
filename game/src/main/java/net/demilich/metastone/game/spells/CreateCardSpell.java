@@ -59,7 +59,7 @@ public class CreateCardSpell extends Spell {
 				}
 			}
 			if (!spellChoices.isEmpty()) {
-				SpellDesc chosenSpell = SpellUtils.getSpellDiscover(context, player, desc, spellChoices).getSpell();
+				SpellDesc chosenSpell = SpellUtils.getSpellDiscover(context, player, source.getReference(), spellChoices).getSpell();
 				chosenSpellInts.add(spellOrder.get(chosenSpell));
 				if (exclusive) {
 					spellChoices.remove(chosenSpell);
